@@ -1,6 +1,6 @@
-import React, { Component } from "react";
+import { useState, useMemo, useCallback } from "react";
 import styled from "styled-components";
-import stickers from "../../stickers.json";
+import stickersData from "../../stickers.json";
 import Sticker from "./Sticker";
 import Choice from "./Choice";
 
@@ -11,39 +11,37 @@ const StickerContainer = styled.ul`
   gap: 40px;
   justify-content: center;
   margin-left: auto;
-  margin-right:auto;
+  margin-right: auto;
 `;
 
-class StickerList extends Component {
-  state = {
-    selectedSticker: null,
-  };
+const StickerList = () => {
+  const [selectedSticker, setSelectedSticker] = useState(null);
 
-  selectStickers = (sticker) => {
-    this.setState({ selectedSticker: sticker });
-  };
+  const stickers = useMemo(() => stickersData, [stickersData]);
 
-  render() {
-    return (
-      <>
-        <StickerContainer>
-          {stickers.map((sticker, index) => {
-            return (
-              <Sticker
-                key={index}
-                img={sticker.img}
-                label={sticker.label}
-                onClick={() => {
-                  this.selectStickers(sticker);
-                }}
-              />
-            );
-          })}
-        </StickerContainer>
-        <Choice selectedSticker={this.state.selectedSticker} />
-      </>
-    );
-  }
-}
+  const selectStickers = useCallback((sticker) => {
+    setSelectedSticker(sticker);
+  }, []);
+
+  return (
+    <>
+      <StickerContainer>
+        {stickers.map((sticker, index) => {
+          return (
+            <Sticker
+              key={index}
+              img={sticker.img}
+              label={sticker.label}
+              onClick={() => {
+                selectStickers(sticker);
+              }}
+            />
+          );
+        })}
+      </StickerContainer>
+      <Choice selectedSticker={selectedSticker} />
+    </>
+  );
+};
 
 export default StickerList;
